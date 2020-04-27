@@ -34,7 +34,7 @@
             <input type="hidden" name="url" value="{{$url_callback_bot ?? ''}}">
         </form>
 
-            <form id="gewebhookinfo" action="{{route('admin.setting.getwebhookinfo')}}" method="POST" style="display:none">
+            <form id="getwebhookinfo" action="{{route('admin.setting.getwebhookinfo')}}" method="POST" style="display:none">
                 {{csrf_field()}}
             </form>
     </div>
