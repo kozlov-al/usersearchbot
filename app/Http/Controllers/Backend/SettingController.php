@@ -36,7 +36,7 @@ class SettingController extends Controller
     public function setwebhook(Request $request)
     {
         $result = $this->sendTelegramData('setwebhook', [
-            'query' => ['url' => $request->url() . '/' . \Telegram\Bot\Laravel\Facades\Telegram::getAccessToken()]
+            'query' => ['url' => 'https://jgjg.ru' . '/' . \Telegram\Bot\Laravel\Facades\Telegram::getAccessToken()]
         ]);
         return redirect()->route('admin.setting.index')->with('status', $result);
     }
