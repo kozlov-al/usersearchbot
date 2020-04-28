@@ -34,11 +34,11 @@ return [
     'bots'                         => [
         'mybot' => [
             'username'            => 'TelegramBot',
-            'token'               => env('TELEGRAM_BOT_TOKEN', '1074162449:AAGmQ7cf_SZCOG9nkqVkaec3ZTEgw8sPiIg'),
+            'token'               => env('TELEGRAM_BOT_TOKEN', null),
             'certificate_path'    => env('TELEGRAM_CERTIFICATE_PATH', 'YOUR-CERTIFICATE-PATH'),
             'webhook_url'         => env('TELEGRAM_WEBHOOK_URL', 'YOUR-BOT-WEBHOOK-URL'),
             'commands'            => [
-                //Acme\Project\Commands\MyTelegramBot\BotCommand::class
+             //  \App\Telegram\TestCommand::class,
             ],
         ],
 
@@ -115,8 +115,10 @@ return [
     | will respond with a list of available commands and description.
     |
     */
+
     'commands'                     => [
         Telegram\Bot\Commands\HelpCommand::class,
+        \App\Telegram\TestCommand::class
     ],
 
     /*
@@ -199,6 +201,6 @@ return [
     'shared_commands'              => [
         // 'start' => Acme\Project\Commands\StartCommand::class,
         // 'stop' => Acme\Project\Commands\StopCommand::class,
-        // 'status' => Acme\Project\Commands\StatusCommand::class,
+//         'status' => Acme\Project\Commands\StatusCommand::class,
     ],
 ];

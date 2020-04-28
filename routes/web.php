@@ -26,6 +26,10 @@ Route::middleware(['auth'])->prefix('admin')->namespace('Backend')->group(functi
     Route::post('/setting/setwebhook','SettingController@setwebhook')->name('admin.setting.setwebhook');
     Route::post('/setting/getwebhookinfo','SettingController@getwebhookinfo')->name('admin.setting.getwebhookinfo');
 });
+
+Route::any(\Telegram\Bot\Laravel\Facades\Telegram::getAccessToken(), function (){
+    \Telegram\Bot\Laravel\Facades\Telegram::commandsHandler(true);
+});
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');

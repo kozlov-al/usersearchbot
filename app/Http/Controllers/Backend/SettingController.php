@@ -36,21 +36,21 @@ class SettingController extends Controller
     public function setwebhook(Request $request)
     {
         $result = $this->sendTelegramData('setwebhook', [
-            'query' => ['url' => $request->url() . '/' . Telegram::getAccessToken()]
+            'query' => ['url' => 'https://jgjg.ru' . '/' . \Telegram\Bot\Laravel\Facades\Telegram::getAccessToken()]
         ]);
         return redirect()->route('admin.setting.index')->with('status', $result);
     }
 
-    public function getwebhook(Request $request)
+    public function getwebhookinfo(Request $request)
     {
-        $result = $this->sendTelegramData('getWebhookInfo');
+        $result = $this->sendTelegramData('getwebhookinfo');
         return redirect()->route('admin.setting.index')->with('status', $result);
 
     }
 
     public function sendTelegramData($route = '', $params = [], $method = 'POST')
     {
-        $client = new \GuzzleHttp\Client(['base_uri' => 'https://api.telegram.org/bot' . Telegram::getAccessToken() . '/']);
+        $client = new \GuzzleHttp\Client(['base_uri' => 'https://api.telegram.org/bot' .\Telegram\Bot\Laravel\Facades\Telegram::getAccessToken() . '/']);
         $result = $client->request($method, $route, $params);
         return (string)$result->getBody();
     }
