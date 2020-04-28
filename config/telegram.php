@@ -31,14 +31,14 @@ return [
     |                       Acme\Project\Commands\BotFather\ByeCommand::class,
     |             ]
     */
-    'bots'                         => [
+    'bots' => [
         'mybot' => [
-            'username'            => 'TelegramBot',
-            'token'               => env('TELEGRAM_BOT_TOKEN', null),
-            'certificate_path'    => env('TELEGRAM_CERTIFICATE_PATH', 'YOUR-CERTIFICATE-PATH'),
-            'webhook_url'         => env('TELEGRAM_WEBHOOK_URL', 'YOUR-BOT-WEBHOOK-URL'),
-            'commands'            => [
-             //  \App\Telegram\TestCommand::class,
+            'username' => 'TelegramBot',
+            'token' => env('TELEGRAM_BOT_TOKEN', null),
+            'certificate_path' => env('TELEGRAM_CERTIFICATE_PATH', 'YOUR-CERTIFICATE-PATH'),
+            'webhook_url' => env('TELEGRAM_WEBHOOK_URL', 'YOUR-BOT-WEBHOOK-URL'),
+            'commands' => [
+                //App\Telegram\TestCommand::class,
             ],
         ],
 
@@ -57,7 +57,7 @@ return [
     | your default bot for regular use.
     |
     */
-    'default'                      => 'mybot',
+    'default' => 'mybot',
 
     /*
     |--------------------------------------------------------------------------
@@ -70,7 +70,7 @@ return [
     | Possible Values: (Boolean) "true" OR "false"
     |
     */
-    'async_requests'               => env('TELEGRAM_ASYNC_REQUESTS', false),
+    'async_requests' => env('TELEGRAM_ASYNC_REQUESTS', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -83,7 +83,7 @@ return [
     | Default: GuzzlePHP
     |
     */
-    'http_client_handler'          => null,
+    'http_client_handler' => null,
 
     /*
     |--------------------------------------------------------------------------
@@ -116,9 +116,10 @@ return [
     |
     */
 
-    'commands'                     => [
+    'commands' => [
         Telegram\Bot\Commands\HelpCommand::class,
-        \App\Telegram\TestCommand::class
+        App\Telegram\StartCommand::class,
+        App\Telegram\TestCommand::class,
     ],
 
     /*
@@ -139,7 +140,7 @@ return [
     |
     | Examples shown below are by the group type for you to understand each of them.
     */
-    'command_groups'               => [
+    'command_groups' => [
         /* // Group Type: 1
            'commmon' => [
                 Acme\Project\Commands\TodoCommand::class,
@@ -198,7 +199,7 @@ return [
     | Think of this as a central storage, to register, reuse and maintain them across all bots.
     |
     */
-    'shared_commands'              => [
+    'shared_commands' => [
         // 'start' => Acme\Project\Commands\StartCommand::class,
         // 'stop' => Acme\Project\Commands\StopCommand::class,
 //         'status' => Acme\Project\Commands\StatusCommand::class,

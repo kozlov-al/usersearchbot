@@ -38,13 +38,11 @@ class TestCommand extends Command
         $user = User::find(1);
         $this->replyWithMessage(['text' => 'Почта пользователя в laravel: ' . $user->email]);
 
-        $telegram_user = Telegram::getWebhookUpdates()['message'];
+        $telegram_user = $this->telegram->getWebhookUpdates()['message'];
         $text = sprintf('$s: $s' . PHP_EOL, 'Ваш номер чата', $telegram_user['from']['id']);
         $text .= sprintf('$s: $s' . PHP_EOL, 'Ваше имя пользователя телеграм ', $telegram_user['from']['username']);
 
-        $this->replyWithMessage(compact('text'));
-
-
+        $this->replyWithMessage(['text' => $text]);
 
     }
 }

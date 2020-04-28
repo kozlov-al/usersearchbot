@@ -29,6 +29,7 @@ Route::middleware(['auth'])->prefix('admin')->namespace('Backend')->group(functi
 
 Route::any(\Telegram\Bot\Laravel\Facades\Telegram::getAccessToken(), function (){
     \Telegram\Bot\Laravel\Facades\Telegram::commandsHandler(true);
+    return 'ok';
 });
 Auth::routes();
 
