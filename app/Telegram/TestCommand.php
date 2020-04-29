@@ -18,10 +18,6 @@ class TestCommand extends Command
      */
     protected $name = 'test';
 
-    /**
-     * @var array Command Aliases
-     */
-    protected $aliases = ['listcommands'];
 
     /**
      * @var string Command Description
@@ -34,15 +30,38 @@ class TestCommand extends Command
      */
     public function handle()
     {
+        $text ='';
         $this->replyWithChatAction(['action' => Actions::TYPING]);
+        $update = $this->getUpdate();
+        $name = $update->getMessage()->from->firstName;
+        $f_name = $update->getMessage()->from->lastName;
         $user = User::find(1);
-        $this->replyWithMessage(['text' => 'Почта пользователя в laravel: ' . $user->email]);
+        $email = 'Почта пользователя в laravel: ' . $user->email;
+        $text = $name . ' ' . $f_name. '  '.PHP_EOL . $email;
+        $this->replyWithMessage(compact('text'));
 
-        $telegram_user = $this->telegram->getWebhookUpdates()['message'];
-        $text = sprintf('$s: $s' . PHP_EOL, 'Ваш номер чата', $telegram_user['from']['id']);
-        $text .= sprintf('$s: $s' . PHP_EOL, 'Ваше имя пользователя телеграм ', $telegram_user['from']['username']);
 
-        $this->replyWithMessage(['text' => $text]);
+//        $keyboard = [
+//            ['7', '8', '9'],
+//            ['4', '5', '6'],
+//            ['1', '2', '3'],
+//            ['0']
+//        ];
+//
+//        $reply_markup = $this->telegram->replyKeyboardMarkup([
+//            'keyboard' => $keyboard,
+//            'resize_keyboard' => true,
+//            'one_time_keyboard' => true
+//        ]);
+//
+//        $this->telegram->sendMessage([
+//            'chat_id' => $this->telegram->getMe()->id,
+//            'text' => 'Hello World',
+//            'reply_markup' => $reply_markup
+//        ]);
+
+
+
 
     }
 }

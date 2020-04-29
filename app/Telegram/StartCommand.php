@@ -18,15 +18,11 @@ class StartCommand extends Command
      */
     protected $name = 'start';
 
-    /**
-     * @var array Command Aliases
-     */
-    protected $aliases = ['listcommands'];
 
     /**
      * @var string Command Description
      */
-    protected $description = 'Hi, welcome to UserSearchBot!';
+    protected $description = 'Start command.';
 
 
     /**
@@ -34,8 +30,9 @@ class StartCommand extends Command
      */
     public function handle()
     {
-        $this->replyWithChatAction(['action' => Actions::TYPING]);
-        $this->replyWithMessage($this->getDescription());
-
+        $update = $this->getUpdate();
+        $name = $update->getMessage()->from->firstName;
+        $text = "Hello, $name! Welcome to our bot!\nType /help to get a list of available commands.";
+        $this->replyWithMessage(compact('text'));
     }
 }
