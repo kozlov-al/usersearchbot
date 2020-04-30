@@ -33,6 +33,7 @@ class TestCommand extends Command
     {
 
         $telegram = $this->telegram;
+
         /**
          * profile info
          */
@@ -60,32 +61,26 @@ class TestCommand extends Command
             ->setOneTimeKeyboard(true)
             ->row(
                 Keyboard::inlineButton(['text' => 'Список пользователей на сайте', 'callback_data' => '1']),
-                Keyboard::inlineButton(['text' => 'Ясно', 'callback_data' => '/butt2'])
+                Keyboard::inlineButton(['text' => 'Ясно', 'callback_data' => '2'])
             );
+
         $this->replyWithMessage(['text' => $text, 'reply_markup' => $keyboard]);
 
+//        $result = $this->getUpdates();
+//        $text = $result["message"]["text"];
+//        $chat_id = $result["message"]["chat"]["id"]; //Уникальный идентификатор пользователя
+//        $name = $result["message"]["from"]["username"];
 
-        $arUpdates = $telegram->getUpdates();
-
-
-            foreach ($arUpdates['result'] as $arResult) {
-                if (array_key_exists('callback_query',$arResult)) {
-
-                    $userId = $arResult['callback_query']['from']['id'];
-
-                    if ($arResult['callback_query']['data'] == 1) {
-                        $telegram->sendMessage([$userId, 'Its ok!']);
-                    } else {
-                        $telegram->sendMessage([$userId, 'Its not ok!']);
-                    }
-                }
-            }
-        }
-
-
-        //$this->telegram->sendMessage(['text' => $users_info])
-        //$this->replyWithMessage(['text' => $users_info])
-
+//        if($text){
+//            if($text == 'Ясно')
+//            {
+//                $this->replyWithMessage(['text' => $users_info]);
+//            }
 
     }
+    //$this->telegram->sendMessage(['text' => $users_info])
+    //$this->replyWithMessage(['text' => $users_info])
+
+
 }
+
