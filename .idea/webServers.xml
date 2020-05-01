@@ -2,7 +2,7 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="2f59c619-ca9f-414c-99fd-fa076902a20d" name="tgbot" url="http://45.86.182.52">
+      <webServer id="2f59c619-ca9f-414c-99fd-fa076902a20d" name="tgbot (project level)" url="http://45.86.182.52">
         <fileTransfer host="45.86.182.52" port="22" rootFolder="/var/www/web/sites" accessType="SFTP">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
