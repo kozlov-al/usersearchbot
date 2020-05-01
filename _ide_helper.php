@@ -2,8 +2,8 @@
 // @formatter:off
 
 /**
- * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 7.5.2 on 2020-04-17 11:16:35.
+ * A helper file for Laravel, to provide autocomplete information to your IDE
+ * Generated for Laravel 7.9.2 on 2020-05-01 13:42:26.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -2679,6 +2679,19 @@ namespace Illuminate\Support\Facades {
         {
                         return \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($value);
         }
+        
+        /**
+         * Compile Blade echos into valid PHP.
+         *
+         * @param string $value
+         * @return string 
+         * @static 
+         */ 
+        public static function compileEchos($value)
+        {
+                        /** @var \Illuminate\View\Compilers\BladeCompiler $instance */
+                        return $instance->compileEchos($value);
+        }
          
     }
 
@@ -3066,6 +3079,8 @@ namespace Illuminate\Support\Facades {
     /**
      * 
      *
+     * @method static \Illuminate\Contracts\Cache\Lock lock(string $name, int $seconds = 0, mixed $owner = null)
+     * @method static \Illuminate\Contracts\Cache\Lock restoreLock(string $name, string $owner)
      * @see \Illuminate\Cache\CacheManager
      * @see \Illuminate\Cache\Repository
      */ 
@@ -3955,7 +3970,7 @@ namespace Illuminate\Support\Facades {
          * @param string $key
          * @param mixed $default
          * @param string|null $path
-         * @return \Symfony\Component\HttpFoundation\Cookie 
+         * @return \Symfony\Component\HttpFoundation\Cookie|null 
          * @static 
          */ 
         public static function queued($key, $default = null, $path = null)
@@ -6517,7 +6532,7 @@ namespace Illuminate\Support\Facades {
      *
      * @method static \Illuminate\Http\Client\PendingRequest asJson()
      * @method static \Illuminate\Http\Client\PendingRequest asForm()
-     * @method static \Illuminate\Http\Client\PendingRequest attach(string $name, string $contents, string|null $filename = null, array $headers)
+     * @method static \Illuminate\Http\Client\PendingRequest attach(string $name, string $contents, string|null $filename = null, array $headers = [])
      * @method static \Illuminate\Http\Client\PendingRequest asMultipart()
      * @method static \Illuminate\Http\Client\PendingRequest bodyFormat(string $format)
      * @method static \Illuminate\Http\Client\PendingRequest contentType(string $contentType)
@@ -6662,6 +6677,19 @@ namespace Illuminate\Support\Facades {
         {
                         /** @var \Illuminate\Http\Client\Factory $instance */
                         $instance->assertNothingSent();
+        }
+        
+        /**
+         * Assert how many requests have been recorded.
+         *
+         * @param $count
+         * @return void 
+         * @static 
+         */ 
+        public static function assertSentCount($count)
+        {
+                        /** @var \Illuminate\Http\Client\Factory $instance */
+                        $instance->assertSentCount($count);
         }
         
         /**
@@ -8609,6 +8637,40 @@ namespace Illuminate\Support\Facades {
         {
                         /** @var \Illuminate\Routing\Redirector $instance */
                         return $instance->route($route, $parameters, $status, $headers);
+        }
+        
+        /**
+         * Create a new redirect response to a signed named route.
+         *
+         * @param string $route
+         * @param mixed $parameters
+         * @param \DateTimeInterface|\DateInterval|int|null $expiration
+         * @param int $status
+         * @param array $headers
+         * @return \Illuminate\Http\RedirectResponse 
+         * @static 
+         */ 
+        public static function signedRoute($route, $parameters = [], $expiration = null, $status = 302, $headers = [])
+        {
+                        /** @var \Illuminate\Routing\Redirector $instance */
+                        return $instance->signedRoute($route, $parameters, $expiration, $status, $headers);
+        }
+        
+        /**
+         * Create a new redirect response to a signed named route.
+         *
+         * @param string $route
+         * @param \DateTimeInterface|\DateInterval|int|null $expiration
+         * @param mixed $parameters
+         * @param int $status
+         * @param array $headers
+         * @return \Illuminate\Http\RedirectResponse 
+         * @static 
+         */ 
+        public static function temporarySignedRoute($route, $expiration, $parameters = [], $status = 302, $headers = [])
+        {
+                        /** @var \Illuminate\Routing\Redirector $instance */
+                        return $instance->temporarySignedRoute($route, $expiration, $parameters, $status, $headers);
         }
         
         /**
@@ -11409,6 +11471,21 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
+         * Create a new Route object.
+         *
+         * @param array|string $methods
+         * @param string $uri
+         * @param mixed $action
+         * @return \Illuminate\Routing\Route 
+         * @static 
+         */ 
+        public static function newRoute($methods, $uri, $action)
+        {
+                        /** @var \Illuminate\Routing\Router $instance */
+                        return $instance->newRoute($methods, $uri, $action);
+        }
+        
+        /**
          * Return the response returned by the given route.
          *
          * @param string $name
@@ -13340,7 +13417,8 @@ namespace Illuminate\Support\Facades {
          * @return bool 
          * @static 
          */ 
-        public static function prepend($path, $data, $separator = '')
+        public static function prepend($path, $data, $separator = '
+')
         {
                         /** @var \Illuminate\Filesystem\FilesystemAdapter $instance */
                         return $instance->prepend($path, $data, $separator);
@@ -13355,7 +13433,8 @@ namespace Illuminate\Support\Facades {
          * @return bool 
          * @static 
          */ 
-        public static function append($path, $data, $separator = '')
+        public static function append($path, $data, $separator = '
+')
         {
                         /** @var \Illuminate\Filesystem\FilesystemAdapter $instance */
                         return $instance->append($path, $data, $separator);
@@ -15181,6 +15260,135 @@ namespace Illuminate\Support {
      *
      */ 
     class Str {
+         
+    }
+ 
+}
+
+namespace Telegram\Bot\Laravel\Facades { 
+
+    /**
+     * Class Telegram.
+     *
+     */ 
+    class Telegram {
+        
+        /**
+         * Set the IoC Container.
+         *
+         * @param $container Container instance
+         * @return \Telegram\Bot\BotsManager 
+         * @static 
+         */ 
+        public static function setContainer($container)
+        {
+                        /** @var \Telegram\Bot\BotsManager $instance */
+                        return $instance->setContainer($container);
+        }
+        
+        /**
+         * Get the configuration for a bot.
+         *
+         * @param string|null $name
+         * @throws \InvalidArgumentException
+         * @return array 
+         * @static 
+         */ 
+        public static function getBotConfig($name = null)
+        {
+                        /** @var \Telegram\Bot\BotsManager $instance */
+                        return $instance->getBotConfig($name);
+        }
+        
+        /**
+         * Get a bot instance.
+         *
+         * @param string $name
+         * @return \Telegram\Bot\Api 
+         * @static 
+         */ 
+        public static function bot($name = null)
+        {
+                        /** @var \Telegram\Bot\BotsManager $instance */
+                        return $instance->bot($name);
+        }
+        
+        /**
+         * Reconnect to the given bot.
+         *
+         * @param string $name
+         * @return \Telegram\Bot\Api 
+         * @static 
+         */ 
+        public static function reconnect($name = null)
+        {
+                        /** @var \Telegram\Bot\BotsManager $instance */
+                        return $instance->reconnect($name);
+        }
+        
+        /**
+         * Disconnect from the given bot.
+         *
+         * @param string $name
+         * @return void 
+         * @static 
+         */ 
+        public static function disconnect($name = null)
+        {
+                        /** @var \Telegram\Bot\BotsManager $instance */
+                        $instance->disconnect($name);
+        }
+        
+        /**
+         * Get the specified configuration value for Telegram.
+         *
+         * @param string $key
+         * @param mixed $default
+         * @return mixed 
+         * @static 
+         */ 
+        public static function getConfig($key, $default = null)
+        {
+                        /** @var \Telegram\Bot\BotsManager $instance */
+                        return $instance->getConfig($key, $default);
+        }
+        
+        /**
+         * Get the default bot name.
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function getDefaultBot()
+        {
+                        /** @var \Telegram\Bot\BotsManager $instance */
+                        return $instance->getDefaultBot();
+        }
+        
+        /**
+         * Set the default bot name.
+         *
+         * @param string $name
+         * @return \Telegram\Bot\BotsManager 
+         * @static 
+         */ 
+        public static function setDefaultBot($name)
+        {
+                        /** @var \Telegram\Bot\BotsManager $instance */
+                        return $instance->setDefaultBot($name);
+        }
+        
+        /**
+         * Return all of the created bots.
+         *
+         * @return \Telegram\Bot\Api[] 
+         * @static 
+         */ 
+        public static function getBots()
+        {
+                        /** @var \Telegram\Bot\BotsManager $instance */
+                        return $instance->getBots();
+        }
          
     }
  
@@ -17620,7 +17828,7 @@ namespace  {
             /**
              * Add an "order by" clause to the query.
              *
-             * @param \Closure|\Illuminate\Database\Query\Builder|string $column
+             * @param \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Query\Expression|string $column
              * @param string $direction
              * @return \Illuminate\Database\Query\Builder 
              * @throws \InvalidArgumentException
@@ -18371,6 +18579,8 @@ namespace  {
     class Validator extends \Illuminate\Support\Facades\Validator {}
 
     class View extends \Illuminate\Support\Facades\View {}
+
+    class Telegram extends \Telegram\Bot\Laravel\Facades\Telegram {}
 
     class Flare extends \Facade\Ignition\Facades\Flare {}
  
