@@ -38,15 +38,15 @@ class TelegramController extends Controller
         Telegram::commandsHandler(true);
 
 
-        $tgbot = Telegram::bot();
-        if (isset($message)) {
-            if (isset($message['text']) === 'OK')
-                $tgbot->sendMessage([
-                    'chat_id' => $tgbot->getChat()->getId(),
-                    'message' => 'Privet'
-                ]);
-            Log::info('kek', (array)$message['text']);
-        }
+//        $tgbot = Telegram::bot();
+//        if (isset($message)) {
+//            if (isset($message['text']) === 'OK')
+//                $tgbot->sendMessage([
+//                    'chat_id' => $tgbot->getChat()->getId(),
+//                    'message' => 'Privet'
+//                ]);
+//            Log::info('kek', (array)$message['text']);
+//        }
 
 
     }
