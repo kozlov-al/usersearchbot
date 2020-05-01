@@ -28,7 +28,10 @@ Route::middleware(['auth'])->prefix('admin')->namespace('Backend')->group(functi
 });
 
 Route::any(\Telegram\Bot\Laravel\Facades\Telegram::getAccessToken(), function (){
+
+
     app(\App\Http\Controllers\Backend\TelegramController::class)->webhook();
+
     return 'ok';
 });
 Auth::routes();

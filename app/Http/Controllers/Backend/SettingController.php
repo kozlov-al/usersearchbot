@@ -35,9 +35,15 @@ class SettingController extends Controller
 
     public function setwebhook(Request $request)
     {
-        $result = $this->sendTelegramData('setwebhook', [
-            'query' => ['url' => 'https://jgjg.ru' . '/' . \Telegram\Bot\Laravel\Facades\Telegram::getAccessToken()]
-        ]);
+        $query = [
+            'url' => 'https://jgjg.ru' . '/' . \Telegram\Bot\Laravel\Facades\Telegram::getAccessToken(),
+            'allowed_updates'=> ['message', 'callback_query','inline_query'],
+            'certificate'=>'/etc/letsencrypt/live/jgjg.ru/fullchain.pem',
+        ];
+        $result = $this->sendTelegramData('setwebhook', compact('query'));
+
+        dd($result);
+
         return redirect()->route('admin.setting.index')->with('status', $result);
     }
 
@@ -50,8 +56,11 @@ class SettingController extends Controller
 
     public function sendTelegramData($route = '', $params = [], $method = 'POST')
     {
-        $client = new \GuzzleHttp\Client(['base_uri' => 'https://api.telegram.org/bot' .\Telegram\Bot\Laravel\Facades\Telegram::getAccessToken() . '/']);
+        $token = \Telegram\Bot\Laravel\Facades\Telegram::getAccessToken();
+        $client = new \GuzzleHttp\Client([
+            'base_uri' => 'https://api.telegram.org/bot' .$token . '/',
+        ]);
         $result = $client->request($method, $route, $params);
-        return (string)$result->getBody();
+        return (string)$result->getBody()->getContents();
     }
 }

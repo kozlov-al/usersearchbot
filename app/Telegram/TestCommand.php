@@ -3,11 +3,16 @@
 namespace App\Telegram;
 
 use App\User;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Telegram\Bot\Actions;
 use Telegram\Bot\Commands\Command;
 use Telegram\Bot\Laravel\Facades\Telegram;
 use Telegram\Bot\Keyboard\Keyboard;
+use Telegram\Bot\Objects\CallbackQuery;
+use Telegram\Bot\Objects\Message;
+use Telegram\Bot\Objects\MessageEntity;
+use Telegram\Bot\Objects\Update;
 
 /**
  * Class HelpCommand.
@@ -28,63 +33,66 @@ class TestCommand extends Command
 
     /**
      * {@inheritdoc}
+     * @throws \Telegram\Bot\Exceptions\TelegramSDKException
      */
-    public function handle()
+    public function handle($arguments)
     {
 
-        $telegram = $this->telegram;
+        /**
+         * @var Update $update
+         */
+        $update = $this->getUpdate();
+
+        /**
+         * @var Message $message
+         */
+
+
+        $callbackQuery = $update->getCallbackQuery();
+
+        Log::info('$arguments: ' . json_encode($arguments) . ', callback:' . $callbackQuery);
+        $message = isset($callbackQuery) ? $callbackQuery->getMessage() : $update->getMessage();
+
         /**
          * profile info
          */
-        $text = '';
-        $this->replyWithChatAction(['action' => Actions::TYPING]);
-        $update = $this->getUpdate();
-        $name = $update->getMessage()->from->firstName;
-        $f_name = $update->getMessage()->from->lastName;
-        $user = User::find(1);
-        $email = 'Почта пользователя в laravel: ' . $user->email;
-        $text = $name . ' ' . $f_name . '  ' . PHP_EOL . $email;
-        /**
-         * users
-         */
-        $users = User::all();
-        $users_info = 'Список пользователей Laravel: ' . PHP_EOL;
-        foreach ($users as $user) {
-            $users_info .= $user->name . ' ' . $user->email . PHP_EOL;
+
+        if (null === $callbackQuery) {
+            /**
+             * @var Keyboard $keyboard
+             */
+            /**
+             * @var string $params ['text']
+             * @var string $params ['url']
+             * @var string $params ['callback_data']
+             * @var string $params ['switch_inline_query']
+             */
+            $params = [
+                'text' => 'OK',
+                'callback_data' => 'callback callback_data',
+                'switch_inline_query' => 'switch_inline_query',
+                'url' => "url",
+            ];
+
+
+            $keyboard = Keyboard::make()
+                ->setResizeKeyboard(true)
+                ->setOneTimeKeyboard(true)
+                ->row(
+                    Keyboard::inlineButton($params)
+                );
+
+
+            $this->replyWithMessage(['text' => 'Нажмите одну из кнопок', 'reply_markup' => $keyboard]);
+
+
+
+
+        } else {
+//            $text = $message->getText();
+            $text = '2';
+            $this->replyWithMessage(['text' => $text]);
         }
-        /**
-         * keyboard
-         */
-        $keyboard = Keyboard::make()
-            ->setResizeKeyboard(true)
-            ->setOneTimeKeyboard(true)
-            ->row(
-                Keyboard::inlineButton(['text' => 'Список пользователей на сайте', 'callback_data' => '1']),
-                Keyboard::inlineButton(['text' => 'Ясно', 'callback_data' => '/butt2'])
-            );
-        $this->replyWithMessage(['text' => $text, 'reply_markup' => $keyboard]);
-
-
-        $arUpdates = $telegram->getUpdates();
-
-
-            foreach ($arUpdates['result'] as $arResult) {
-                if (array_key_exists('callback_query',$arResult)) {
-
-                    $userId = $arResult['callback_query']['from']['id'];
-
-                    if ($arResult['callback_query']['data'] == 1) {
-                        $telegram->sendMessage([$userId, 'Its ok!']);
-                    } else {
-                        $telegram->sendMessage([$userId, 'Its not ok!']);
-                    }
-                }
-            }
-        }
-
-
-        //$this->telegram->sendMessage(['text' => $users_info])
-        //$this->replyWithMessage(['text' => $users_info])
 
 
     }
