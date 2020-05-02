@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Telegram\TestCommand;
 use App\TelegramUser;
+use App\User;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Telegram\Bot\Commands\Command;
 use Telegram\Bot\Commands\CommandBus;
 use Telegram\Bot\Laravel\Facades\Telegram;
@@ -19,7 +22,8 @@ class TelegramController extends Controller
         /**
          * @var Update $update
          */
-        $update = Telegram::getWebhookUpdates();
+        // $update = Telegram::getWebhookUpdate();
+        $update = Telegram::bot()->getWebhookUpdate();
 
         Log::warning(json_encode($update['callback_query'] ?? null));
 
@@ -28,26 +32,36 @@ class TelegramController extends Controller
         if ($isCallBackQuery) {
             Log::critical('Callback: ', (array)$update->getCallbackQuery());
         }
+        $message = $update->getCallbackQuery() ? $update->getCallbackQuery()->getData() : $update->getMessage();
 
-        $message = $update->getCallbackQuery() ? $update->getCallbackQuery()->getMessage() : $update->getMessage();
-        $messageText = $update->getCallbackQuery() ? $update->getCallbackQuery()->getMessage()->getText() : $update->getMessage()->getText();
-        $text = 'Is callback: ' . $isCallBackQuery . ', text:' . $messageText;
+        $messageText = $update->getCallbackQuery() ? $update->getCallbackQuery()->getData() : $update->getMessage()->getText();
+        $text = 'Is callback: ' . $isCallBackQuery . ', text: ' . $messageText;
         Log::info($text, (array)$message);
 
 
-        Telegram::commandsHandler(true);
+
+       Telegram::bot()->commandsHandler(true);
 
 
-//        $tgbot = Telegram::bot();
-//        if (isset($message)) {
-//            if (isset($message['text']) === 'OK')
-//                $tgbot->sendMessage([
-//                    'chat_id' => $tgbot->getChat()->getId(),
-//                    'message' => 'Privet'
-//                ]);
-//            Log::info('kek', (array)$message['text']);
-//        }
 
+       if($callbackQuery = $update->getCallbackQuery()){
+           $chat_id = $update->getChat()->getId();
+
+           /**
+            * @var string $data
+            */
+           $data = $callbackQuery->getData();
+           $dataParsed = explode(' ',$data);
+           $command = $dataParsed[0] ?? null;
+           $action = $dataParsed[1] ?? null;
+
+           switch ($command){
+               case 'test':{
+                   $cmd = new TestCommand;
+                   $cmd->$action($update,$callbackQuery);
+               }break;
+           }
+       }
 
     }
 }

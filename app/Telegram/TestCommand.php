@@ -3,11 +3,17 @@
 namespace App\Telegram;
 
 use App\User;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Telegram\Bot\Actions;
+use Telegram\Bot\Api;
 use Telegram\Bot\Commands\Command;
 use Telegram\Bot\Laravel\Facades\Telegram;
 use Telegram\Bot\Keyboard\Keyboard;
+use Telegram\Bot\Objects\CallbackQuery;
+use Telegram\Bot\Objects\Message;
+use Telegram\Bot\Objects\Update;
 
 /**
  * Class HelpCommand.
@@ -25,11 +31,18 @@ class TestCommand extends Command
      */
     protected $description = 'Test command';
 
+    public function __construct()
+    {
+        if ($this->getTelegram() === null) {
+            $this->telegram = new Api();
+        }
+    }
 
     /**
      * {@inheritdoc}
+     * @throws \Telegram\Bot\Exceptions\TelegramSDKException
      */
-    public function handle()
+    public function handle($argument)
     {
 
         $telegram = $this->telegram;
@@ -37,50 +50,64 @@ class TestCommand extends Command
         /**
          * profile info
          */
-        $text = '';
+        $text = 'hello';
         $this->replyWithChatAction(['action' => Actions::TYPING]);
         $update = $this->getUpdate();
-        $name = $update->getMessage()->from->firstName;
-        $f_name = $update->getMessage()->from->lastName;
-        $user = User::find(1);
-        $email = 'Почта пользователя в laravel: ' . $user->email;
-        $text = $name . ' ' . $f_name . '  ' . PHP_EOL . $email;
-        /**
-         * users
-         */
-        $users = User::all();
-        $users_info = 'Список пользователей Laravel: ' . PHP_EOL;
-        foreach ($users as $user) {
-            $users_info .= $user->name . ' ' . $user->email . PHP_EOL;
-        }
-        /**
-         * keyboard
-         */
+
+
         $keyboard = Keyboard::make()
+            ->inline()
             ->setResizeKeyboard(true)
             ->setOneTimeKeyboard(true)
             ->row(
-                Keyboard::inlineButton(['text' => 'Список пользователей на сайте', 'callback_data' => '1']),
-                Keyboard::inlineButton(['text' => 'Ясно', 'callback_data' => '2'])
+                Keyboard::inlineButton(['text' => 'Мое имя', 'callback_data' => 'test callbackGetMyName']),
+                Keyboard::inlineButton(['text' => 'google', 'callback_data' => 'test callbackGoogle'])
+            )
+            ->row(
+                Keyboard::inlineButton(['text' => 'ОК', 'callback_data' => 'test ok'])
+
             );
 
-        $this->replyWithMessage(['text' => $text, 'reply_markup' => $keyboard]);
-
-//        $result = $this->getUpdates();
-//        $text = $result["message"]["text"];
-//        $chat_id = $result["message"]["chat"]["id"]; //Уникальный идентификатор пользователя
-//        $name = $result["message"]["from"]["username"];
-
-//        if($text){
-//            if($text == 'Ясно')
-//            {
-//                $this->replyWithMessage(['text' => $users_info]);
-//            }
+        Log::info('Keyboard: ' . $keyboard);
+        $this->replyWithMessage(['text' => $text, 'reply_markup' => $keyboard, 'message_id' => $update->getMessage()->getMessageId()]);
 
     }
-    //$this->telegram->sendMessage(['text' => $users_info])
-    //$this->replyWithMessage(['text' => $users_info])
 
+
+    /**
+     * @param Update $update
+     * @param CallbackQuery $query
+     * @return Message
+     */
+    public function callbackGetMyName(Update $update, CallbackQuery $query): Message
+    {
+        $this->update = $update;
+        $name = $query->getMessage()->getChat()->getLastName();
+        $name .= ' ' . $query->getMessage()->getChat()->getFirstName();
+        $name .= PHP_EOL.$query->getMessage()->getChat()->getUsername();
+        $text = 'Ваше имя в телеграм:' . PHP_EOL . $name;
+
+        /**
+         * @var Message $message
+         */
+        return $this->replyWithMessage(compact('text'));
+    }
+
+
+    /**
+     * @param Update $update
+     * @param CallbackQuery $query
+     * @return Message
+     */
+    public function callbackGoogle(Update $update, CallbackQuery $query): Message
+    {
+        $this->update = $update;
+        $text = Carbon::now()->format('H:i:s ') . ' google';
+        /**
+         * @var Message $message
+         */
+        return $this->replyWithMessage(compact('text'));
+    }
 
 }
 
