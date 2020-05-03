@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Telegram\Bot\Commands\Command;
 use Telegram\Bot\Commands\CommandBus;
+use Telegram\Bot\Commands\HelpCommand;
 use Telegram\Bot\Laravel\Facades\Telegram;
 use Telegram\Bot\Objects\EditedMessage;
 use Telegram\Bot\Objects\Message;
@@ -58,6 +59,10 @@ class TelegramController extends Controller
            switch ($command){
                case 'test':{
                    $cmd = new TestCommand;
+                   $cmd->$action($update,$callbackQuery);
+               }break;
+               case 'help':{
+                   $cmd = new HelpCommand();
                    $cmd->$action($update,$callbackQuery);
                }break;
            }

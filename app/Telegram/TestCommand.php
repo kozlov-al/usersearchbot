@@ -14,7 +14,6 @@ use Telegram\Bot\Keyboard\Keyboard;
 use Telegram\Bot\Objects\CallbackQuery;
 use Telegram\Bot\Objects\Message;
 use Telegram\Bot\Objects\Update;
-use function GuzzleHttp\Promise\all;
 
 /**
  * Class HelpCommand.
@@ -65,7 +64,7 @@ class TestCommand extends Command
                 Keyboard::inlineButton(['text' => 'google', 'callback_data' => 'test callbackGoogle'])
             )
             ->row(
-                Keyboard::inlineButton(['text' => 'Список пользователей канала', 'callback_data' => 'test callbackUsers'])
+                Keyboard::inlineButton(['text' => 'ОК', 'callback_data' => 'test ok'])
 
             );
 
@@ -110,22 +109,5 @@ class TestCommand extends Command
         return $this->replyWithMessage(compact('text'));
     }
 
-
-    /**
-     * @param Update $update
-     * @param CallbackQuery $query
-     * @return Message
-     */
-    public function callbackUsers(Update $update, CallbackQuery $query): Message
-    {
-        $this->update = $update;
-
-        Log::info('users',(array)$query->getMessage()->getChat()->all());
-
-        /**
-         * @var Message $message
-         */
-        return $this->replyWithMessage(compact('text'));
-    }
 }
 
