@@ -33,4 +33,11 @@ class TelegramUser extends Model
     protected $guarded = [];
     protected $table = 'telegram_users';
     protected $primaryKey = 'id';
+    protected $fillable = [
+        'is_bot',
+        'first_name',
+        'last_name',
+        'username',
+        'language_code',
+    ];
 }
