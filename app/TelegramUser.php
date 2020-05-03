@@ -34,10 +34,109 @@ class TelegramUser extends Model
     protected $table = 'telegram_users';
     protected $primaryKey = 'id';
     protected $fillable = [
+        'id',
         'is_bot',
         'first_name',
         'last_name',
         'username',
         'language_code',
     ];
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getIsBot(): ?int
+    {
+        return $this->is_bot;
+    }
+
+    /**
+     * @param int|null $is_bot
+     */
+    public function setIsBot(?int $is_bot): void
+    {
+        $this->is_bot = $is_bot;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getFirstName(): ?string
+    {
+        return $this->first_name;
+    }
+
+    /**
+     * @param string|null $first_name
+     */
+    public function setFirstName(?string $first_name): void
+    {
+        $this->first_name = $first_name;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLastName(): ?string
+    {
+        return $this->last_name;
+    }
+
+    /**
+     * @param string|null $last_name
+     */
+    public function setLastName(?string $last_name): void
+    {
+        $this->last_name = $last_name;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    /**
+     * @param string|null $username
+     */
+    public function setUsername(?string $username): void
+    {
+        $this->username = $username;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLanguageCode(): string
+    {
+        return $this->language_code;
+    }
+
+    /**
+     * @param string $language_code
+     */
+    public function setLanguageCode(string $language_code): void
+    {
+        $this->language_code = $language_code;
+    }
+
+
 }

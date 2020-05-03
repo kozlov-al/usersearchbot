@@ -2,10 +2,12 @@
 
 namespace App\Telegram;
 
+use App\TelegramUser;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
+use PHPUnit\ExampleExtension\Comparator;
 use Telegram\Bot\Actions;
 use Telegram\Bot\Api;
 use Telegram\Bot\Commands\Command;
@@ -14,6 +16,8 @@ use Telegram\Bot\Keyboard\Keyboard;
 use Telegram\Bot\Objects\CallbackQuery;
 use Telegram\Bot\Objects\Message;
 use Telegram\Bot\Objects\Update;
+
+use function GuzzleHttp\Promise\all;
 
 /**
  * Class HelpCommand.
@@ -42,7 +46,7 @@ class TestCommand extends Command
      * {@inheritdoc}
      * @throws \Telegram\Bot\Exceptions\TelegramSDKException
      */
-    public function handle($argument)
+    public function handle($arguments)
     {
 
         $telegram = $this->telegram;
@@ -64,7 +68,7 @@ class TestCommand extends Command
                 Keyboard::inlineButton(['text' => 'google', 'callback_data' => 'test callbackGoogle'])
             )
             ->row(
-                Keyboard::inlineButton(['text' => 'ОК', 'callback_data' => 'test ok'])
+                Keyboard::inlineButton(['text' => 'Список пользователей канала', 'callback_data' => 'test callbackUsers'])
 
             );
 
@@ -84,7 +88,7 @@ class TestCommand extends Command
         $this->update = $update;
         $name = $query->getMessage()->getChat()->getLastName();
         $name .= ' ' . $query->getMessage()->getChat()->getFirstName();
-        $name .= PHP_EOL.$query->getMessage()->getChat()->getUsername();
+        $name .= PHP_EOL . $query->getMessage()->getChat()->getUsername();
         $text = 'Ваше имя в телеграм:' . PHP_EOL . $name;
 
         /**
@@ -109,5 +113,34 @@ class TestCommand extends Command
         return $this->replyWithMessage(compact('text'));
     }
 
+
+    /**
+     * @param Update $update
+     * @param CallbackQuery $query
+     * @return Message
+     */
+    public function callbackUsers(Update $update, CallbackQuery $query): Message
+    {
+        $this->update = $update;
+        $text = '';
+        $name = '';
+        $tgUsers = TelegramUser::all();
+        foreach ($tgUsers as $users) {
+            $name .= $users->getFirstName() . ' ' . $users->getLastName() . PHP_EOL;
+        }
+        $text = 'Список пользователей в телеграм:' . PHP_EOL . $name;
+
+
+        $name = '';
+        $users = User::all();
+        foreach ($users as $user) {
+            $name .= $user->getName() . PHP_EOL;
+        }
+        $text = $text.PHP_EOL.'Список пользователй на сайте:'.PHP_EOL.$name;
+        /**
+         * @var Message $message
+         */
+        return $this->replyWithMessage(compact('text'));
+    }
 }
 

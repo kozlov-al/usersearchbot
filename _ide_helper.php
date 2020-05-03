@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 7.9.2 on 2020-05-03 05:59:07.
+ * Generated for Laravel 7.9.2 on 2020-05-03 16:52:42.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -15265,6 +15265,135 @@ namespace Illuminate\Support {
  
 }
 
+namespace Telegram\Bot\Laravel\Facades { 
+
+    /**
+     * Class Telegram.
+     *
+     */ 
+    class Telegram {
+        
+        /**
+         * Set the IoC Container.
+         *
+         * @param $container Container instance
+         * @return \Telegram\Bot\BotsManager 
+         * @static 
+         */ 
+        public static function setContainer($container)
+        {
+                        /** @var \Telegram\Bot\BotsManager $instance */
+                        return $instance->setContainer($container);
+        }
+        
+        /**
+         * Get the configuration for a bot.
+         *
+         * @param string|null $name
+         * @throws \InvalidArgumentException
+         * @return array 
+         * @static 
+         */ 
+        public static function getBotConfig($name = null)
+        {
+                        /** @var \Telegram\Bot\BotsManager $instance */
+                        return $instance->getBotConfig($name);
+        }
+        
+        /**
+         * Get a bot instance.
+         *
+         * @param string $name
+         * @return \Telegram\Bot\Api 
+         * @static 
+         */ 
+        public static function bot($name = null)
+        {
+                        /** @var \Telegram\Bot\BotsManager $instance */
+                        return $instance->bot($name);
+        }
+        
+        /**
+         * Reconnect to the given bot.
+         *
+         * @param string $name
+         * @return \Telegram\Bot\Api 
+         * @static 
+         */ 
+        public static function reconnect($name = null)
+        {
+                        /** @var \Telegram\Bot\BotsManager $instance */
+                        return $instance->reconnect($name);
+        }
+        
+        /**
+         * Disconnect from the given bot.
+         *
+         * @param string $name
+         * @return void 
+         * @static 
+         */ 
+        public static function disconnect($name = null)
+        {
+                        /** @var \Telegram\Bot\BotsManager $instance */
+                        $instance->disconnect($name);
+        }
+        
+        /**
+         * Get the specified configuration value for Telegram.
+         *
+         * @param string $key
+         * @param mixed $default
+         * @return mixed 
+         * @static 
+         */ 
+        public static function getConfig($key, $default = null)
+        {
+                        /** @var \Telegram\Bot\BotsManager $instance */
+                        return $instance->getConfig($key, $default);
+        }
+        
+        /**
+         * Get the default bot name.
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function getDefaultBot()
+        {
+                        /** @var \Telegram\Bot\BotsManager $instance */
+                        return $instance->getDefaultBot();
+        }
+        
+        /**
+         * Set the default bot name.
+         *
+         * @param string $name
+         * @return \Telegram\Bot\BotsManager 
+         * @static 
+         */ 
+        public static function setDefaultBot($name)
+        {
+                        /** @var \Telegram\Bot\BotsManager $instance */
+                        return $instance->setDefaultBot($name);
+        }
+        
+        /**
+         * Return all of the created bots.
+         *
+         * @return \Telegram\Bot\Api[] 
+         * @static 
+         */ 
+        public static function getBots()
+        {
+                        /** @var \Telegram\Bot\BotsManager $instance */
+                        return $instance->getBots();
+        }
+         
+    }
+ 
+}
+
 namespace Facade\Ignition\Facades { 
 
     /**
@@ -15524,135 +15653,6 @@ namespace Facade\Ignition\Facades {
         {
                         /** @var \Facade\FlareClient\Flare $instance */
                         return $instance->group($groupName, $properties);
-        }
-         
-    }
- 
-}
-
-namespace Telegram\Bot\Laravel\Facades { 
-
-    /**
-     * Class Telegram.
-     *
-     */ 
-    class Telegram {
-        
-        /**
-         * Set the IoC Container.
-         *
-         * @param $container Container instance
-         * @return \Telegram\Bot\BotsManager 
-         * @static 
-         */ 
-        public static function setContainer($container)
-        {
-                        /** @var \Telegram\Bot\BotsManager $instance */
-                        return $instance->setContainer($container);
-        }
-        
-        /**
-         * Get the configuration for a bot.
-         *
-         * @param string|null $name
-         * @throws \InvalidArgumentException
-         * @return array 
-         * @static 
-         */ 
-        public static function getBotConfig($name = null)
-        {
-                        /** @var \Telegram\Bot\BotsManager $instance */
-                        return $instance->getBotConfig($name);
-        }
-        
-        /**
-         * Get a bot instance.
-         *
-         * @param string $name
-         * @return \Telegram\Bot\Api 
-         * @static 
-         */ 
-        public static function bot($name = null)
-        {
-                        /** @var \Telegram\Bot\BotsManager $instance */
-                        return $instance->bot($name);
-        }
-        
-        /**
-         * Reconnect to the given bot.
-         *
-         * @param string $name
-         * @return \Telegram\Bot\Api 
-         * @static 
-         */ 
-        public static function reconnect($name = null)
-        {
-                        /** @var \Telegram\Bot\BotsManager $instance */
-                        return $instance->reconnect($name);
-        }
-        
-        /**
-         * Disconnect from the given bot.
-         *
-         * @param string $name
-         * @return void 
-         * @static 
-         */ 
-        public static function disconnect($name = null)
-        {
-                        /** @var \Telegram\Bot\BotsManager $instance */
-                        $instance->disconnect($name);
-        }
-        
-        /**
-         * Get the specified configuration value for Telegram.
-         *
-         * @param string $key
-         * @param mixed $default
-         * @return mixed 
-         * @static 
-         */ 
-        public static function getConfig($key, $default = null)
-        {
-                        /** @var \Telegram\Bot\BotsManager $instance */
-                        return $instance->getConfig($key, $default);
-        }
-        
-        /**
-         * Get the default bot name.
-         *
-         * @return string 
-         * @static 
-         */ 
-        public static function getDefaultBot()
-        {
-                        /** @var \Telegram\Bot\BotsManager $instance */
-                        return $instance->getDefaultBot();
-        }
-        
-        /**
-         * Set the default bot name.
-         *
-         * @param string $name
-         * @return \Telegram\Bot\BotsManager 
-         * @static 
-         */ 
-        public static function setDefaultBot($name)
-        {
-                        /** @var \Telegram\Bot\BotsManager $instance */
-                        return $instance->setDefaultBot($name);
-        }
-        
-        /**
-         * Return all of the created bots.
-         *
-         * @return \Telegram\Bot\Api[] 
-         * @static 
-         */ 
-        public static function getBots()
-        {
-                        /** @var \Telegram\Bot\BotsManager $instance */
-                        return $instance->getBots();
         }
          
     }
@@ -18580,9 +18580,9 @@ namespace  {
 
     class View extends \Illuminate\Support\Facades\View {}
 
-    class Flare extends \Facade\Ignition\Facades\Flare {}
-
     class Telegram extends \Telegram\Bot\Laravel\Facades\Telegram {}
+
+    class Flare extends \Facade\Ignition\Facades\Flare {}
  
 }
 
