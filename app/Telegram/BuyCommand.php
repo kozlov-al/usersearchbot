@@ -19,7 +19,6 @@ use Telegram\Bot\Objects\Message;
 use Telegram\Bot\Objects\Update;
 use function GuzzleHttp\Promise\all;
 
-
 /**
  * Class HelpCommand.
  */
