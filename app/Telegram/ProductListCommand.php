@@ -17,6 +17,7 @@ use Telegram\Bot\Laravel\Facades\Telegram;
 use Telegram\Bot\Keyboard\Keyboard;
 use Telegram\Bot\Objects\CallbackQuery;
 use Telegram\Bot\Objects\Message;
+use Telegram\Bot\Objects\Payments\LabeledPrice;
 use Telegram\Bot\Objects\Update;
 use Telegram\Bot\Answers\Answerable;
 use App\Product;
@@ -101,7 +102,6 @@ class ProductListCommand extends Command
             $this->telegram->sendMessage(['text' => $text, 'chat_id' => $chat_id, 'reply_markup' => $reply_markup]);
         }
 
-        Log::info('Клавиши: ', $keyboard->all());
 
         $keyboard = Keyboard::make()
             ->inline()
@@ -115,6 +115,10 @@ class ProductListCommand extends Command
     }
 
 
+    /**
+     * @param Update $update
+     * @param CallbackQuery $query
+     */
     public function callbackAddToBasket(Update $update, CallbackQuery $query)
     {
         $this->update = $update;
@@ -122,10 +126,13 @@ class ProductListCommand extends Command
 
         Basket::create([
             'user_id' => $update->getChat()->id,
-            'product_id' => $product->where('id', )
+            'product_id' => $product->where('id', 2)->first()->getId()
         ]);
 
+
     }
+
+
 
 
     /**
@@ -162,8 +169,10 @@ class ProductListCommand extends Command
         if ($basket !== null && $basket->count() > 0) {
 
             $products = Product::where('id', $basket->getProductId())->get();
+            $this->replyWithMessage(['text' => 'Ваши покупки: ']);
 
             foreach ($products as $product) {
+                $price = LabeledPrice::make(['label' => $product->getName(), 'amount' => $product->getPrice()]);
                 $pay = $this->telegram->sendInvoice([
                     'title' => $product->getName(),
                     'photo_url' => $product->getPhotoUrl(),
@@ -172,7 +181,7 @@ class ProductListCommand extends Command
                     'provider_token' => env('TELEGRAM_PROVIDER_TOKEN'),
                     'start_parameter' => 'pay',
                     'currency' => 'RUB',
-                    'prices' => $product->getPrice(),
+                    'prices' => $price,
                     'chat_id' => $update->getChat()->id,
                 ]);
             }
