@@ -5,7 +5,7 @@ namespace PHPSTORM_META {
 
    /**
     * PhpStorm Meta file, to provide autocomplete information for PhpStorm
-    * Generated on 2020-05-03 17:14:27.
+    * Generated on 2020-05-06 10:52:16.
     *
     * @author Barry vd. Heuvel <barryvdh@gmail.com>
     * @see https://github.com/barryvdh/laravel-ide-helper
@@ -164,6 +164,7 @@ namespace PHPSTORM_META {
         'session.store' => \Illuminate\Session\Store::class,
         'telegram' => \Telegram\Bot\BotsManager::class,
         'telegram.bot' => \Telegram\Bot\Api::class,
+        'telegram.bot.commands.webhook' => \Telegram\Bot\Laravel\Artisan\WebhookCommand::class,
         'translation.loader' => \Illuminate\Translation\FileLoader::class,
         'translator' => \Illuminate\Translation\Translator::class,
         'url' => \Illuminate\Routing\UrlGenerator::class,
@@ -326,6 +327,7 @@ namespace PHPSTORM_META {
         'session.store' => \Illuminate\Session\Store::class,
         'telegram' => \Telegram\Bot\BotsManager::class,
         'telegram.bot' => \Telegram\Bot\Api::class,
+        'telegram.bot.commands.webhook' => \Telegram\Bot\Laravel\Artisan\WebhookCommand::class,
         'translation.loader' => \Illuminate\Translation\FileLoader::class,
         'translator' => \Illuminate\Translation\Translator::class,
         'url' => \Illuminate\Routing\UrlGenerator::class,
@@ -488,6 +490,7 @@ namespace PHPSTORM_META {
         'session.store' => \Illuminate\Session\Store::class,
         'telegram' => \Telegram\Bot\BotsManager::class,
         'telegram.bot' => \Telegram\Bot\Api::class,
+        'telegram.bot.commands.webhook' => \Telegram\Bot\Laravel\Artisan\WebhookCommand::class,
         'translation.loader' => \Illuminate\Translation\FileLoader::class,
         'translator' => \Illuminate\Translation\Translator::class,
         'url' => \Illuminate\Routing\UrlGenerator::class,
@@ -650,6 +653,7 @@ namespace PHPSTORM_META {
         'session.store' => \Illuminate\Session\Store::class,
         'telegram' => \Telegram\Bot\BotsManager::class,
         'telegram.bot' => \Telegram\Bot\Api::class,
+        'telegram.bot.commands.webhook' => \Telegram\Bot\Laravel\Artisan\WebhookCommand::class,
         'translation.loader' => \Illuminate\Translation\FileLoader::class,
         'translator' => \Illuminate\Translation\Translator::class,
         'url' => \Illuminate\Routing\UrlGenerator::class,
@@ -812,6 +816,7 @@ namespace PHPSTORM_META {
         'session.store' => \Illuminate\Session\Store::class,
         'telegram' => \Telegram\Bot\BotsManager::class,
         'telegram.bot' => \Telegram\Bot\Api::class,
+        'telegram.bot.commands.webhook' => \Telegram\Bot\Laravel\Artisan\WebhookCommand::class,
         'translation.loader' => \Illuminate\Translation\FileLoader::class,
         'translator' => \Illuminate\Translation\Translator::class,
         'url' => \Illuminate\Routing\UrlGenerator::class,
@@ -974,6 +979,7 @@ namespace PHPSTORM_META {
         'session.store' => \Illuminate\Session\Store::class,
         'telegram' => \Telegram\Bot\BotsManager::class,
         'telegram.bot' => \Telegram\Bot\Api::class,
+        'telegram.bot.commands.webhook' => \Telegram\Bot\Laravel\Artisan\WebhookCommand::class,
         'translation.loader' => \Illuminate\Translation\FileLoader::class,
         'translator' => \Illuminate\Translation\Translator::class,
         'url' => \Illuminate\Routing\UrlGenerator::class,
@@ -1136,6 +1142,7 @@ namespace PHPSTORM_META {
         'session.store' => \Illuminate\Session\Store::class,
         'telegram' => \Telegram\Bot\BotsManager::class,
         'telegram.bot' => \Telegram\Bot\Api::class,
+        'telegram.bot.commands.webhook' => \Telegram\Bot\Laravel\Artisan\WebhookCommand::class,
         'translation.loader' => \Illuminate\Translation\FileLoader::class,
         'translator' => \Illuminate\Translation\Translator::class,
         'url' => \Illuminate\Routing\UrlGenerator::class,
@@ -1298,6 +1305,7 @@ namespace PHPSTORM_META {
         'session.store' => \Illuminate\Session\Store::class,
         'telegram' => \Telegram\Bot\BotsManager::class,
         'telegram.bot' => \Telegram\Bot\Api::class,
+        'telegram.bot.commands.webhook' => \Telegram\Bot\Laravel\Artisan\WebhookCommand::class,
         'translation.loader' => \Illuminate\Translation\FileLoader::class,
         'translator' => \Illuminate\Translation\Translator::class,
         'url' => \Illuminate\Routing\UrlGenerator::class,

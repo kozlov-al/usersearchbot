@@ -16,7 +16,7 @@ use Telegram\Bot\Keyboard\Keyboard;
 use Telegram\Bot\Objects\CallbackQuery;
 use Telegram\Bot\Objects\Message;
 use Telegram\Bot\Objects\Update;
-
+use Telegram\Bot\Answers\Answerable;
 use function GuzzleHttp\Promise\all;
 
 /**
@@ -37,7 +37,7 @@ class TestCommand extends Command
 
     public function __construct()
     {
-        if ($this->getTelegram() === null) {
+        if ($this->telegram === null) {
             $this->telegram = new Api();
         }
     }
@@ -46,7 +46,7 @@ class TestCommand extends Command
      * {@inheritdoc}
      * @throws \Telegram\Bot\Exceptions\TelegramSDKException
      */
-    public function handle($arguments)
+    public function handle()
     {
 
         $telegram = $this->telegram;
@@ -55,7 +55,7 @@ class TestCommand extends Command
          * profile info
          */
         $text = 'hello';
-        $this->replyWithChatAction(['action' => Actions::TYPING]);
+    //    $this->replyWithChatAction(['action' => Actions::TYPING]);
         $update = $this->getUpdate();
 
 
@@ -73,7 +73,9 @@ class TestCommand extends Command
             );
 
         Log::info('Keyboard: ' . $keyboard);
-        $this->replyWithMessage(['text' => $text, 'reply_markup' => $keyboard, 'message_id' => $update->getMessage()->getMessageId()]);
+        $chatId = $update->getChat()->id;
+
+        $this->replyWithMessage(['text' => $text, 'reply_markup' => $keyboard, 'message_id' => $update->getMessage()->messageId]);
 
     }
 
@@ -86,9 +88,10 @@ class TestCommand extends Command
     public function callbackGetMyName(Update $update, CallbackQuery $query): Message
     {
         $this->update = $update;
-        $name = $query->getMessage()->getChat()->getLastName();
-        $name .= ' ' . $query->getMessage()->getChat()->getFirstName();
-        $name .= PHP_EOL . $query->getMessage()->getChat()->getUsername();
+
+        $name = $query->message->chat->lastName;
+        $name .= ' ' . $query->message->chat->firstName;
+        $name .= PHP_EOL . $query->message->chat->username;
         $text = 'Ваше имя в телеграм:' . PHP_EOL . $name;
 
         /**
@@ -118,9 +121,11 @@ class TestCommand extends Command
      * @param Update $update
      * @param CallbackQuery $query
      * @return Message
+     * @throws \Telegram\Bot\Exceptions\TelegramSDKException
      */
     public function callbackUsers(Update $update, CallbackQuery $query): Message
     {
+    $this->telegram = new Api();
         $this->update = $update;
         $text = '';
         $name = '';
@@ -137,10 +142,13 @@ class TestCommand extends Command
             $name .= $user->getName() . PHP_EOL;
         }
         $text = $text.PHP_EOL.'Список пользователй на сайте:'.PHP_EOL.$name;
+        $chatId = $update->getChat()->id;
         /**
          * @var Message $message
          */
+
         return $this->replyWithMessage(compact('text'));
+
     }
 }
 

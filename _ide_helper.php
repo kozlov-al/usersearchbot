@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 7.9.2 on 2020-05-03 17:14:27.
+ * Generated for Laravel 7.9.2 on 2020-05-06 10:52:15.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -15290,7 +15290,7 @@ namespace Telegram\Bot\Laravel\Facades {
          * Get the configuration for a bot.
          *
          * @param string|null $name
-         * @throws \InvalidArgumentException
+         * @throws InvalidArgumentException
          * @return array 
          * @static 
          */ 
@@ -15304,6 +15304,7 @@ namespace Telegram\Bot\Laravel\Facades {
          * Get a bot instance.
          *
          * @param string $name
+         * @throws TelegramSDKException
          * @return \Telegram\Bot\Api 
          * @static 
          */ 
@@ -15317,6 +15318,7 @@ namespace Telegram\Bot\Laravel\Facades {
          * Reconnect to the given bot.
          *
          * @param string $name
+         * @throws TelegramSDKException
          * @return \Telegram\Bot\Api 
          * @static 
          */ 
@@ -15330,13 +15332,13 @@ namespace Telegram\Bot\Laravel\Facades {
          * Disconnect from the given bot.
          *
          * @param string $name
-         * @return void 
+         * @return \Telegram\Bot\BotsManager 
          * @static 
          */ 
         public static function disconnect($name = null)
         {
                         /** @var \Telegram\Bot\BotsManager $instance */
-                        $instance->disconnect($name);
+                        return $instance->disconnect($name);
         }
         
         /**
@@ -15356,13 +15358,13 @@ namespace Telegram\Bot\Laravel\Facades {
         /**
          * Get the default bot name.
          *
-         * @return string 
+         * @return string|null 
          * @static 
          */ 
-        public static function getDefaultBot()
+        public static function getDefaultBotName()
         {
                         /** @var \Telegram\Bot\BotsManager $instance */
-                        return $instance->getDefaultBot();
+                        return $instance->getDefaultBotName();
         }
         
         /**
@@ -15388,6 +15390,19 @@ namespace Telegram\Bot\Laravel\Facades {
         {
                         /** @var \Telegram\Bot\BotsManager $instance */
                         return $instance->getBots();
+        }
+        
+        /**
+         * Builds the list of commands for the given commands array.
+         *
+         * @param array $commands
+         * @return array An array of commands which includes global and bot specific commands.
+         * @static 
+         */ 
+        public static function parseBotCommands($commands)
+        {
+                        /** @var \Telegram\Bot\BotsManager $instance */
+                        return $instance->parseBotCommands($commands);
         }
          
     }

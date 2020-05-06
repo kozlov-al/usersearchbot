@@ -27,10 +27,11 @@ class TelegramController extends Controller
         $telegram = Telegram::bot();
 
        // $userId = $update->getMessage()->getFrom()->getId();
-        $chatId = $update->getChat()->getId();
+        $chatId = $update->getChat()->id;
 $userId = $chatId;
        // Log::info('chat id: '. $chatId);
        // Log::info('user id: '. $userId);
+
 
         $chatMember = $telegram->getChatMember([
             'chat_id' => $chatId,
@@ -41,26 +42,26 @@ $userId = $chatId;
 
         if (!TelegramUser::where('id', $userId)->exists()) {
             TelegramUser::create([
-                'id' => $chatMember->getUser()->getId(),
-                'is_bot' => $chatMember->getUser()->getIsBot(),
-                'first_name' => $chatMember->getUser()->getFirstName(),
-                'last_name' => $chatMember->getUser()->getLastName(),
-                'username' => $chatMember->getUser()->getUsername(),
-                'language_code' => $chatMember->getUser()['language_code']
+                'id' => $chatMember->user->id,
+                'is_bot' => $chatMember->user->isBot,
+                'first_name' => $chatMember->user->firstName,
+                'last_name' => $chatMember->user->lastName,
+                'username' => $chatMember->user->username,
+                'language_code' => $chatMember->user->languageCode
             ]);
         }
 
 
         //  Log::warning(json_encode($update['callback_query'] ?? null));
 
-        $isCallBackQuery = '' !== trim($update->getCallbackQuery());
+        $isCallBackQuery = '' !== trim($update->callbackQuery);
         $isCallBackQuery = (int)$isCallBackQuery;
 //        if ($isCallBackQuery) {
 //            Log::critical('Callback: ', (array)$update->getCallbackQuery());
 //        }
-        $message = $update->getCallbackQuery() ? $update->getCallbackQuery()->getData() : $update->getMessage();
+        $message = $update->callbackQuery ? $update->callbackQuery->data: $update->getMessage();
 
-        $messageText = $update->getCallbackQuery() ? $update->getCallbackQuery()->getData() : $update->getMessage()->getText();
+        $messageText = $update->callbackQuery ? $update->callbackQuery->data : $update->getMessage()->text;
         $text = 'Is callback: ' . $isCallBackQuery . ', text: ' . $messageText;
         //  Log::info($text, (array)$message);
 
@@ -68,13 +69,14 @@ $userId = $chatId;
         Telegram::bot()->commandsHandler(true);
 
 
-        if ($callbackQuery = $update->getCallbackQuery()) {
-            $chat_id = $update->getChat()->getId();
+        if ($callbackQuery = $update->callbackQuery) {
+            $chat_id = $update->getChat()->id;
 
             /**
              * @var string $data
              */
-            $data = $callbackQuery->getData();
+
+            $data = $callbackQuery->data;
             $dataParsed = explode(' ', $data);
             $command = $dataParsed[0] ?? null;
             $action = $dataParsed[1] ?? null;
@@ -83,12 +85,6 @@ $userId = $chatId;
                 case 'test':
                     {
                         $cmd = new TestCommand;
-                        $cmd->$action($update, $callbackQuery);
-                    }
-                    break;
-                case 'help':
-                    {
-                        $cmd = new HelpCommand();
                         $cmd->$action($update, $callbackQuery);
                     }
                     break;
