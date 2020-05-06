@@ -72,11 +72,10 @@ class TestCommand extends Command
 
             );
 
-        Log::info('Keyboard: ' . $keyboard);
+     //   Log::info('Keyboard: ' . $keyboard);
         $chatId = $update->getChat()->id;
 
         $this->replyWithMessage(['text' => $text, 'reply_markup' => $keyboard, 'message_id' => $update->getMessage()->messageId]);
-
     }
 
 
@@ -125,7 +124,6 @@ class TestCommand extends Command
      */
     public function callbackUsers(Update $update, CallbackQuery $query): Message
     {
-    $this->telegram = new Api();
         $this->update = $update;
         $text = '';
         $name = '';

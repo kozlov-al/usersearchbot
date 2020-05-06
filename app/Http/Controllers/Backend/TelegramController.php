@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Telegram\ProductListCommand;
 use App\Telegram\TestCommand;
 use App\TelegramUser;
 use App\User;
@@ -16,6 +17,7 @@ use Telegram\Bot\Objects\EditedMessage;
 use Telegram\Bot\Objects\Message;
 use Telegram\Bot\Objects\Update;
 use Faker\Provider\ru_RU\Payment;
+
 class TelegramController extends Controller
 {
     public function webhook()
@@ -26,11 +28,11 @@ class TelegramController extends Controller
         $update = Telegram::bot()->getWebhookUpdate();
         $telegram = Telegram::bot();
 
-       // $userId = $update->getMessage()->getFrom()->getId();
+        // $userId = $update->getMessage()->getFrom()->getId();
         $chatId = $update->getChat()->id;
-$userId = $chatId;
-       // Log::info('chat id: '. $chatId);
-       // Log::info('user id: '. $userId);
+        $userId = $chatId;
+        // Log::info('chat id: '. $chatId);
+        // Log::info('user id: '. $userId);
 
 
         $chatMember = $telegram->getChatMember([
@@ -59,7 +61,7 @@ $userId = $chatId;
 //        if ($isCallBackQuery) {
 //            Log::critical('Callback: ', (array)$update->getCallbackQuery());
 //        }
-        $message = $update->callbackQuery ? $update->callbackQuery->data: $update->getMessage();
+        $message = $update->callbackQuery ? $update->callbackQuery->data : $update->getMessage();
 
         $messageText = $update->callbackQuery ? $update->callbackQuery->data : $update->getMessage()->text;
         $text = 'Is callback: ' . $isCallBackQuery . ', text: ' . $messageText;
@@ -70,7 +72,7 @@ $userId = $chatId;
 
 
         if ($callbackQuery = $update->callbackQuery) {
-            $chat_id = $update->getChat()->id;
+            // $chat_id = $update->getChat()->id;
 
             /**
              * @var string $data
@@ -85,6 +87,12 @@ $userId = $chatId;
                 case 'test':
                     {
                         $cmd = new TestCommand;
+                        $cmd->$action($update, $callbackQuery);
+                    }
+                    break;
+                case 'list':
+                    {
+                        $cmd = new ProductListCommand;
                         $cmd->$action($update, $callbackQuery);
                     }
                     break;

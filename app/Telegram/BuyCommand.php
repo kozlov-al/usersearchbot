@@ -51,7 +51,6 @@ class BuyCommand extends Command
     {
 
         $telegram = $this->telegram;
-        Log::info($telegram->getMe()->id);
         /**
          * profile info
          */
@@ -62,7 +61,7 @@ class BuyCommand extends Command
 
         $chatId = $update->getMessage()->chat->id;
 
-        Log::info('info' . $update->getMessage()->chat->id);
+       // Log::info('info' . $update->getMessage()->chat->id);
 
         $price = LabeledPrice::make(['label' => 'Оплата', 'amount' => 7373]);
 
@@ -77,7 +76,7 @@ class BuyCommand extends Command
             'prices' => $price,
             'chat_id' => $chatId,
         ]);
-        Log::info('pay' . $pay);
+       // Log::info('pay' . $pay);
     }
 
 }
