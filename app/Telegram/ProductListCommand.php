@@ -52,9 +52,6 @@ class ProductListCommand extends Command
      */
     public function handle()
     {
-        Log::info('Handle 1');
-
-
         $telegram = $this->telegram;
 
         $keyboard = Keyboard::make()
@@ -85,23 +82,44 @@ class ProductListCommand extends Command
         $chat_id = $update->getChat()->id;
 
         foreach ($products as $product) {
-            $text = $product->getId() . ' ' . $product->getName() . PHP_EOL;
-            $text .= $product->getDescription() . PHP_EOL;
-            $text .= 'Цена: ' . $product->getPrice() . PHP_EOL;
-            $keyboard = Keyboard::make()
-                ->inline()
-                ->setResizeKeyboard(true)
-                ->setOneTimeKeyboard(true)
-                ->row(
-                    Keyboard::inlineButton(['text' => 'Добавить в корзину', 'callback_data' => 'list callbackAddToBasket'])
-                );
-            $reply_markup = $keyboard;
 
-            $this->telegram->sendPhoto(['chat_id' => $chat_id, 'photo' => new InputFile($product->getPhotoUrl())]);
+            if (!Basket::where('product_id', $product->getId())->exists()) {
+                $keyboard = Keyboard::make()
+                    ->inline()
+                    ->setResizeKeyboard(true)
+                    ->setOneTimeKeyboard(true)
+                    ->row(
+                        Keyboard::inlineButton(['text' => 'Добавить в корзину', 'callback_data' => 'list callbackAddToBasket', 'id' => $product->getId()]),
+                        Keyboard::inlineButton(['text' => 'Посмотреть на сайте', 'url' => 'wwww.google.com'])
+                    );
+                Log::info('keyboard', (array)$keyboard);
+                $caption = $product->getName() . PHP_EOL . $product->getDescription() . PHP_EOL . 'Цена: ' . $product->getPrice();
 
-            $this->telegram->sendMessage(['text' => $text, 'chat_id' => $chat_id, 'reply_markup' => $reply_markup]);
+                $this->telegram->sendPhoto([
+                    'chat_id' => $chat_id,
+                    'photo' => new InputFile($product->getPhotoUrl()),
+                    'caption' => $caption,
+                    'reply_markup' => $keyboard,
+                ]);
+            } else {
+                $keyboard = Keyboard::make()
+                    ->inline()
+                    ->setResizeKeyboard(true)
+                    ->setOneTimeKeyboard(true)
+                    ->row(
+                        Keyboard::inlineButton(['text' => 'Посмотреть на сайте', 'url' => 'wwww.google.com'])
+                    );
+                Log::info('keyboard', (array)$keyboard);
+                $caption = $product->getName() . PHP_EOL . $product->getDescription() . PHP_EOL . 'Цена: ' . $product->getPrice() . PHP_EOL . 'Добавлено в корзину.';
+
+                $this->telegram->sendPhoto([
+                    'chat_id' => $chat_id,
+                    'photo' => new InputFile($product->getPhotoUrl()),
+                    'caption' => $caption,
+                    'reply_markup' => $keyboard,
+                ]);
+            }
         }
-
 
         $keyboard = Keyboard::make()
             ->inline()
@@ -110,7 +128,6 @@ class ProductListCommand extends Command
             ->row(
                 Keyboard::inlineButton(['text' => 'На главную', 'callback_data' => 'list callbackBack'])
             );
-
         return $this->replyWithMessage(['text' => 'На главную', 'reply_markup' => $keyboard]);
     }
 
@@ -118,21 +135,43 @@ class ProductListCommand extends Command
     /**
      * @param Update $update
      * @param CallbackQuery $query
+     * @throws \Telegram\Bot\Exceptions\TelegramSDKException
      */
     public function callbackAddToBasket(Update $update, CallbackQuery $query)
     {
         $this->update = $update;
-        $product = Product::all();
+
+        $caption = explode(PHP_EOL, $query->message->caption);
+
+        $name = $caption[0];
+
+        $product = Product::where('name', $name)->first();
 
         Basket::create([
             'user_id' => $update->getChat()->id,
-            'product_id' => $product->where('id', 2)->first()->getId()
+            'product_id' => $product->getId()
         ]);
 
 
+        $keyboard = Keyboard::make()
+            ->inline()
+            ->setResizeKeyboard(true)
+            ->setOneTimeKeyboard(true)
+            ->row(
+                Keyboard::inlineButton(['text' => 'Посмотреть на сайте', 'url' => 'www.google.com'])
+            );
+
+        Log::info('message 1', (array)$query);
+
+
+        $this->telegram->editMessageCaption([
+            'chat_id' => $query->message->chat->id,
+            'message_id' => $query->message->messageId,
+            'caption' => $query->message->caption . PHP_EOL . 'Добавлено в корзину.',
+            'reply_markup' => $keyboard
+        ]);
+
     }
-
-
 
 
     /**
@@ -144,6 +183,15 @@ class ProductListCommand extends Command
     public function callbackBack(Update $update, CallbackQuery $query): Message
     {
         $this->update = $update;
+//        foreach ($messages as $message){
+//            $this->telegram->deleteMessage([
+//               'chat_id' => $update->message->chat,
+//               'message_id' => $message->id
+//            ]);
+//        }
+
+// TODO: Удаление предыдущих сообщений
+
         $keyboard = Keyboard::make()
             ->inline()
             ->setResizeKeyboard(true)
@@ -161,34 +209,51 @@ class ProductListCommand extends Command
     }
 
 
+    /**
+     * @param Update $update
+     * @param CallbackQuery $query
+     * @return Message
+     * @throws \Telegram\Bot\Exceptions\TelegramSDKException
+     */
     public function callbackMyBasket(Update $update, CallbackQuery $query): Message
     {
         $this->update = $update;
-        $basket = Basket::where('user_id', $update->getChat()->id)->first();
+        $basket = Basket::where('user_id', $update->getChat()->id)->get();
+        $this->replyWithMessage(['text' => 'Ваши покупки: ']);
 
         if ($basket !== null && $basket->count() > 0) {
 
-            $products = Product::where('id', $basket->getProductId())->get();
-            $this->replyWithMessage(['text' => 'Ваши покупки: ']);
+            foreach ($basket as $item) {
+                $products = Product::where('id', $item->getProductId())->get();
 
-            foreach ($products as $product) {
-                $price = LabeledPrice::make(['label' => $product->getName(), 'amount' => $product->getPrice()]);
-                $pay = $this->telegram->sendInvoice([
-                    'title' => $product->getName(),
-                    'photo_url' => $product->getPhotoUrl(),
-                    'description' => $product->getDescription(),
-                    'payload' => 'tranzzo',
-                    'provider_token' => env('TELEGRAM_PROVIDER_TOKEN'),
-                    'start_parameter' => 'pay',
-                    'currency' => 'RUB',
-                    'prices' => $price,
-                    'chat_id' => $update->getChat()->id,
-                ]);
+                foreach ($products as $product) {
+
+                    $keyboard = Keyboard::make()
+                        ->inline()
+                        ->setResizeKeyboard(true)
+                        ->setOneTimeKeyboard(true)
+                        ->row(
+                            Keyboard::inlineButton(['text' => 'Оплатить', 'pay' => true]),
+                            Keyboard::inlineButton(['text' => 'Убрать из корзины', 'callback_data' => 'list callbackDeleteProduct'])
+                        );
+                    $price = LabeledPrice::make(['label' => $product->getName(), 'amount' => $product->getPrice()]);
+                    $pay = $this->telegram->sendInvoice([
+                        'title' => $product->getName(),
+                        'photo_url' => $product->getPhotoUrl(),
+                        'description' => $product->getDescription(),
+                        'payload' => 'tranzzo',
+                        'provider_token' => env('TELEGRAM_PROVIDER_TOKEN'),
+                        'start_parameter' => 'pay',
+                        'currency' => 'RUB',
+                        'prices' => $price,
+                        'chat_id' => $update->getChat()->id,
+                        'reply_markup' => $keyboard
+                    ]);
+                }
             }
         } else {
             $this->replyWithMessage(['text' => 'Вы еще не добавляли товары в корзину.']);
         }
-
         $keyboard = Keyboard::make()
             ->inline()
             ->setResizeKeyboard(true)
@@ -197,6 +262,32 @@ class ProductListCommand extends Command
                 Keyboard::inlineButton(['text' => 'Вернуться', 'callback_data' => 'list callbackBack'])
             );
         return $this->replyWithMessage(['text' => 'Вернуться', 'reply_markup' => $keyboard]);
+    }
+
+
+    /**
+     * @param Update $update
+     * @param CallbackQuery $query
+     * @throws \Telegram\Bot\Exceptions\TelegramSDKException
+     */
+    public function callbackDeleteProduct(Update $update, CallbackQuery $query)
+    {
+        $this->update = $update;
+
+        Log::info('array', (array)$query);
+
+        $caption = explode(PHP_EOL, $query->message->caption);
+
+        $name = $caption[0];
+        $title = $query->message->invoice->title;
+        $product = Product::where('name', $title)->first();
+        Basket::where('product_id', $product->getId())->delete();
+
+        $this->telegram->deleteMessage([
+            'chat_id' => $query->message->chat->id,
+            'message_id' => $query->message->messageId
+        ]);
+
     }
 
 
