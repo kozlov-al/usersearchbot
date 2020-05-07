@@ -70,6 +70,8 @@ class ProductListCommand extends Command
 
 
     /**
+     * Полный список товаров
+     * TODO категории
      * @param Update $update
      * @param CallbackQuery $query
      * @return Message
@@ -92,7 +94,6 @@ class ProductListCommand extends Command
                         Keyboard::inlineButton(['text' => 'Добавить в корзину', 'callback_data' => 'list callbackAddToBasket', 'id' => $product->getId()]),
                         Keyboard::inlineButton(['text' => 'Посмотреть на сайте', 'url' => 'wwww.google.com'])
                     );
-                Log::info('keyboard', (array)$keyboard);
                 $caption = $product->getName() . PHP_EOL . $product->getDescription() . PHP_EOL . 'Цена: ' . $product->getPrice();
 
                 $this->telegram->sendPhoto([
@@ -109,7 +110,6 @@ class ProductListCommand extends Command
                     ->row(
                         Keyboard::inlineButton(['text' => 'Посмотреть на сайте', 'url' => 'wwww.google.com'])
                     );
-                Log::info('keyboard', (array)$keyboard);
                 $caption = $product->getName() . PHP_EOL . $product->getDescription() . PHP_EOL . 'Цена: ' . $product->getPrice() . PHP_EOL . 'Добавлено в корзину.';
 
                 $this->telegram->sendPhoto([
@@ -133,6 +133,8 @@ class ProductListCommand extends Command
 
 
     /**
+     * Кнопка добавления товара в корзину
+     * Инициализация товара происходит по его имени
      * @param Update $update
      * @param CallbackQuery $query
      * @throws \Telegram\Bot\Exceptions\TelegramSDKException
@@ -161,9 +163,9 @@ class ProductListCommand extends Command
                 Keyboard::inlineButton(['text' => 'Посмотреть на сайте', 'url' => 'www.google.com'])
             );
 
-        Log::info('message 1', (array)$query);
-
-
+        /**
+         * когда добавляешь товар в корзину, меняется описание (добавляется строка *добавлено в корзину*), кнопка перестает быть доступной
+         */
         $this->telegram->editMessageCaption([
             'chat_id' => $query->message->chat->id,
             'message_id' => $query->message->messageId,
@@ -183,9 +185,10 @@ class ProductListCommand extends Command
     public function callbackBack(Update $update, CallbackQuery $query): Message
     {
         $this->update = $update;
+
 //        foreach ($messages as $message){
 //            $this->telegram->deleteMessage([
-//               'chat_id' => $update->message->chat,
+//               'chat_id' => $update->message->chat->id,
 //               'message_id' => $message->id
 //            ]);
 //        }
@@ -210,6 +213,8 @@ class ProductListCommand extends Command
 
 
     /**
+     * Корзина пользователя
+     * Здесь происходит оплата
      * @param Update $update
      * @param CallbackQuery $query
      * @return Message
@@ -236,8 +241,12 @@ class ProductListCommand extends Command
                             Keyboard::inlineButton(['text' => 'Оплатить', 'pay' => true]),
                             Keyboard::inlineButton(['text' => 'Убрать из корзины', 'callback_data' => 'list callbackDeleteProduct'])
                         );
-                    $price = LabeledPrice::make(['label' => $product->getName(), 'amount' => $product->getPrice()]);
-                    $pay = $this->telegram->sendInvoice([
+                    $price = LabeledPrice::make([
+                        'label' => $product->getName(),
+                        'amount' => $product->getPrice()
+                    ]);
+// TODO: пробемы с id, с каким id, понятия не имею
+                    $this->telegram->sendInvoice([
                         'title' => $product->getName(),
                         'photo_url' => $product->getPhotoUrl(),
                         'description' => $product->getDescription(),
@@ -252,7 +261,7 @@ class ProductListCommand extends Command
                 }
             }
         } else {
-            $this->replyWithMessage(['text' => 'Вы еще не добавляли товары в корзину.']);
+            $this->replyWithMessage(['text' => 'Ваша корзина пуста.']);
         }
         $keyboard = Keyboard::make()
             ->inline()
@@ -266,6 +275,7 @@ class ProductListCommand extends Command
 
 
     /**
+     * Убрать продукт из корзины
      * @param Update $update
      * @param CallbackQuery $query
      * @throws \Telegram\Bot\Exceptions\TelegramSDKException
@@ -273,8 +283,6 @@ class ProductListCommand extends Command
     public function callbackDeleteProduct(Update $update, CallbackQuery $query)
     {
         $this->update = $update;
-
-        Log::info('array', (array)$query);
 
         $caption = explode(PHP_EOL, $query->message->caption);
 
@@ -287,6 +295,13 @@ class ProductListCommand extends Command
             'chat_id' => $query->message->chat->id,
             'message_id' => $query->message->messageId
         ]);
+
+        if (Basket::where('user_id',$update->getChat()->id)){
+            $this->telegram->sendMessage([
+                'text' => 'Ваша корзина пуста.',
+                'chat_id' => $update->getChat()->id
+            ]);
+        }
 
     }
 
