@@ -91,7 +91,7 @@ class ProductListCommand extends Command
 
         foreach ($products as $product) {
 
-            if (!Basket::where('product_id', $product->getId())->exists()) {
+            if (!Basket::where('user_id', $update->getChat()->id)->where('product_id',$product->getId())->exists()) {
                 $keyboard = Keyboard::make()
                     ->inline()
                     ->setResizeKeyboard(true)
@@ -237,8 +237,8 @@ class ProductListCommand extends Command
         $basket = Basket::where('user_id', $update->getChat()->id)->get();
 
         $this->telegram->deleteMessage([
-           'chat_id' => $update->getChat()->id,
-           'message_id' => $update->getMessage()->messageId
+            'chat_id' => $update->getChat()->id,
+            'message_id' => $update->getMessage()->messageId
         ]);
 
         if ($basket !== null && $basket->count() > 0) {
@@ -304,7 +304,7 @@ class ProductListCommand extends Command
         $name = $caption[0];
         $title = $query->message->invoice->title;
         $product = Product::where('name', $title)->first();
-        Basket::where('product_id', $product->getId())->delete();
+        Basket::where('product_id', $product->getId())->where('user_id',$update->getChat()->id)->delete();
 
         $this->telegram->deleteMessage([
             'chat_id' => $query->message->chat->id,
