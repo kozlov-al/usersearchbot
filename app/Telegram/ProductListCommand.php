@@ -54,6 +54,7 @@ class ProductListCommand extends Command
     {
         $telegram = $this->telegram;
 
+
         $keyboard = Keyboard::make()
             ->inline()
             ->setResizeKeyboard(true)
@@ -82,6 +83,11 @@ class ProductListCommand extends Command
         $this->update = $update;
         $products = Product::all();
         $chat_id = $update->getChat()->id;
+
+        $this->telegram->deleteMessage([
+            'chat_id' => $update->getChat()->id,
+            'message_id' => $update->getMessage()->messageId
+        ]);
 
         foreach ($products as $product) {
 
@@ -177,6 +183,7 @@ class ProductListCommand extends Command
 
 
     /**
+     * Кнопка назад
      * @param Update $update
      * @param CallbackQuery $query
      * @return Message
@@ -186,28 +193,32 @@ class ProductListCommand extends Command
     {
         $this->update = $update;
 
-//        foreach ($messages as $message){
-//            $this->telegram->deleteMessage([
-//               'chat_id' => $update->message->chat->id,
-//               'message_id' => $message->id
-//            ]);
-//        }
+        try {
+            for ($i = $update->getMessage()->messageId - 1; $i > 1; $i--) {
+                if ($update->getMessage()->count() > 1) {
+                    $this->telegram->deleteMessage([
+                        'chat_id' => $update->getChat()->id,
+                        'message_id' => $i
+                    ]);
+                }
+            }
+        } catch (\Exception $ex) {
+            $keyboard = Keyboard::make()
+                ->inline()
+                ->setResizeKeyboard(true)
+                ->setOneTimeKeyboard(true)
+                ->row(
+                    Keyboard::inlineButton(['text' => 'Список товаров', 'callback_data' => 'list callbackList']),
+                    Keyboard::inlineButton(['text' => 'Моя корзина', 'callback_data' => 'list callbackMyBasket'])
+                );
+            return $this->telegram->editMessageText([
+                'text' => 'Главная',
+                'message_id' => $update->getMessage()->messageId,
+                'reply_markup' => $keyboard,
+                'chat_id' => $update->getChat()->id,
+            ]);
+        }
 
-// TODO: Удаление предыдущих сообщений
-
-        $keyboard = Keyboard::make()
-            ->inline()
-            ->setResizeKeyboard(true)
-            ->setOneTimeKeyboard(true)
-            ->row(
-                Keyboard::inlineButton(['text' => 'Список товаров', 'callback_data' => 'list callbackList']),
-                Keyboard::inlineButton(['text' => 'Моя корзина', 'callback_data' => 'list callbackMyBasket'])
-            );
-        return $this->telegram->sendMessage([
-            'text' => 'Главная',
-            'reply_markup' => $keyboard,
-            'chat_id' => $update->getChat()->id,
-        ]);
 
     }
 
@@ -224,7 +235,11 @@ class ProductListCommand extends Command
     {
         $this->update = $update;
         $basket = Basket::where('user_id', $update->getChat()->id)->get();
-        $this->replyWithMessage(['text' => 'Ваши покупки: ']);
+
+        $this->telegram->deleteMessage([
+           'chat_id' => $update->getChat()->id,
+           'message_id' => $update->getMessage()->messageId
+        ]);
 
         if ($basket !== null && $basket->count() > 0) {
 
@@ -247,15 +262,15 @@ class ProductListCommand extends Command
                     ]);
 // TODO: пробемы с id, с каким id, понятия не имею
                     $this->telegram->sendInvoice([
+                        'chat_id' => $update->getChat()->id,
                         'title' => $product->getName(),
                         'photo_url' => $product->getPhotoUrl(),
                         'description' => $product->getDescription(),
                         'payload' => 'tranzzo',
                         'provider_token' => env('TELEGRAM_PROVIDER_TOKEN'),
-                        'start_parameter' => 'pay',
+                        'start_parameter' => true,
                         'currency' => 'RUB',
                         'prices' => $price,
-                        'chat_id' => $update->getChat()->id,
                         'reply_markup' => $keyboard
                     ]);
                 }
@@ -295,13 +310,6 @@ class ProductListCommand extends Command
             'chat_id' => $query->message->chat->id,
             'message_id' => $query->message->messageId
         ]);
-
-        if (Basket::where('user_id',$update->getChat()->id)){
-            $this->telegram->sendMessage([
-                'text' => 'Ваша корзина пуста.',
-                'chat_id' => $update->getChat()->id
-            ]);
-        }
 
     }
 

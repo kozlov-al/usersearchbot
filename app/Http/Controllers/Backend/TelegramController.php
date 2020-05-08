@@ -28,11 +28,8 @@ class TelegramController extends Controller
         $update = Telegram::bot()->getWebhookUpdate();
         $telegram = Telegram::bot();
 
-        // $userId = $update->getMessage()->getFrom()->getId();
         $chatId = $update->getChat()->id;
         $userId = $chatId;
-        // Log::info('chat id: '. $chatId);
-        // Log::info('user id: '. $userId);
 
 
         $chatMember = $telegram->getChatMember([
