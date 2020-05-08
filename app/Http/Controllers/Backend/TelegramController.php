@@ -29,14 +29,7 @@ class TelegramController extends Controller
         $telegram = Telegram::bot();
 
 
-        if ($update->preCheckoutQuery) {
-            Log::info('query', (array)$update->preCheckoutQuery);
-            $telegram->answerPreCheckoutQuery([
-                'pre_checkout_query_id' => $update->preCheckoutQuery->id,
-                'ok' => true,
-                'error_message' => 'Oops:( something was wrong!'
-            ]);
-        }
+
 
 //        if (!TelegramUser::where('id', $update->getChat()->id)->exists()) {
 //            $chatId = $update->getChat()->id;
@@ -73,6 +66,27 @@ class TelegramController extends Controller
         Telegram::bot()->commandsHandler(true);
 
 
+        /**
+         * Обработка платежей
+         * TODO: ПОСЛЕ ОПЛАТЫ НАДО СОХРАНЯТЬ ЧЕК, СОЗДАТЬ ТАБЛИЦУ С ЧЕКАМИ, МОЖЕТ ОНИ ГДЕ ТО ХРАНЯТСЯ
+         */
+        if ($update->preCheckoutQuery) {
+            Log::info('query', (array)$update->preCheckoutQuery);
+            try{
+                $telegram->answerPreCheckoutQuery([
+                    'pre_checkout_query_id' => $update->preCheckoutQuery->id,
+                    'ok' => true,
+                    'error_message' => 'Oops:( something was wrong!'
+                ]);
+            }
+            catch (\Exception $ex){
+                Log::info('oops', (array)$update->preCheckoutQuery);
+            }
+        }
+
+        /**
+         * Обработка комманд
+         */
         if ($callbackQuery = $update->callbackQuery) {
             // $chat_id = $update->getChat()->id;
 
